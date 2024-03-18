@@ -1,0 +1,120 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v1
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /jarmuvek:
+    get:
+      summary: Az adatbázisban tárolt járművek számossága
+      tags:
+      - Jarmu-controller
+      operationId: getJarmuvek
+      responses:
+        "200":
+          description: Sikeresen megszámoltuk a tárolt járművek számát
+          content:
+            text/plain:
+              schema:
+                type: number
+    post:
+      summary: "A járműveket minden adatukkal együtt - az UUID azonosítót kivéve - JSON formátumban küldi be a kliens"
+      operationId: postJarmuvek
+      requestBody:
+        description: Az új autó adatai
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UjJarmu'
+      tags:
+      - Jarmu-controller
+      description: 'Minden mező kitöltése kötelező'
+      responses:
+        "201":
+          description: Új jármű létrehozva
+          headers:
+            Location:
+              schema:
+                type: string 
+              description: Az újonann létrejött jármű id-ja
+        "400":
+          description: Hibás kérésre adott válasz (szintaktika, hiányzó mező, nem megfelelő érték egy mezőben)
+  /jarmuvek/{uuid}:
+    get:
+      summary: Jármű lekérése ID alapjány
+      operationId: getJarmuvekUUID
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+          description: UUID alapú jármű ID
+      tags:
+        - Jarmu-controller
+      responses:
+        "200":
+          description: Létező járműre adott válasz
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jarmu'
+        "404":
+          description: Nem található a kért jármű
+  /kereses:
+    get:
+      summary: A szolgáltatás minden olyan járművet visszaad, amelyek rendszam, tulajdonos vagy az adatok mező bármelyik értékében megtalálható a megadott kulcsszó. Az összehasonlításkor a kis- és nagybetűket nem kell megkülönböztetni.
+      operationId: getKereses
+      parameters:
+        - in: query
+          name: kulcsszo
+          schema:
+            type: string
+          required: true
+          description: Keresett szó
+      tags:
+        - kereses-controller
+      responses:
+        "200":
+          description: Létező járműre adott válasz
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Jarmu'
+        "400":
+          description: Kulcsszó megadása kötelező 
+          
+components:
+  schemas:
+    UjJarmu:
+      type: object
+      required:
+        - rendszam
+        - tulajdonos
+        - forgalmi_ervenyes
+        - adatok
+      properties:
+        rendszam:
+          type: string
+        tulajdonos:
+          type: string
+        forgalmi_ervenyes:
+          type: string
+        adatok:
+          type: string
+#          items:
+#            type: string
+    Jarmu:
+      allOf:
+        - type: object
+          required:
+            - uuid
+          properties:
+            uuid: 
+              type: string
+        - $ref: '#/components/schemas/UjJarmu'

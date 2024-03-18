@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1710704345248-1
+      author: szant (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createSequence:
+            incrementBy: 1
+            sequenceName: vehicle_data_seq
+            startValue: 1
+  - changeSet:
+      id: 1710704345248-2
+      author: szant (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_vehicle
+                  name: uuid
+                  type: VARCHAR(40)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: rendszam
+                  type: VARCHAR(20)
+              - column:
+                  name: tulajdonos
+                  type: VARCHAR(200)
+              - column:
+                  name: forgalmi_ervenyes
+                  type: VARCHAR(10)
+            tableName: vehicle
+  - changeSet:
+      id: 1710706795342-2
+      author: szant (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: vehicle_uuid
+                  type: VARCHAR(40)
+              - column:
+                  name: adatok
+                  type: VARCHAR(255)
+            tableName: vehicle_adatok
+  - changeSet:
+      id: 1710706795342-3
+      author: szant (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: vehicle_uuid
+            baseTableName: vehicle_adatok
+            constraintName: fk_vehicle_adatok_on_vehicle
+            referencedColumnNames: uuid
+            referencedTableName: vehicle

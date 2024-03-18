@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-indexes
+      author: szant
+      changes:
+        - sqlFile:
+            path: db/changelog/add-indexes.sql
+            relativeToChangelogFile: false
+            stripComments: true
+            endDelimiter: \nGO
+            splitStatements: true
