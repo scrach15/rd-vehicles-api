@@ -2,7 +2,6 @@ package hu.rd.vehicle.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -10,12 +9,17 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @ToString
+@NamedNativeQuery(
+        name = "Vehicle.search",
+        query = "SELECT * FROM vehicle_adatok va JOIN vehicle v ON v.uuid = va.vehicle_uuid WHERE v.rendszam ILIKE '%R%' OR v.tulajdonos ILIKE '%R%' OR va.adatok ILIKE '%R%'",
+        resultClass = Vehicle.class
+)
 public class Vehicle {
 
     @Id
@@ -45,7 +49,7 @@ public class Vehicle {
     @NotNull(message = "Nem lehet null")
     @ElementCollection(fetch = FetchType.EAGER)
     @JsonProperty("adatok")
-    public List<String> adatok;
+    public Set<String> adatok;
 
 
 }

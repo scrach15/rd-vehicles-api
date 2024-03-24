@@ -8,8 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -26,6 +25,7 @@ public class VehicleService {
      * @return
      */
     public Vehicle save(Vehicle vehicle) {
+        vehicle.setId(null);
         return vehicleRepository.save(vehicle);
     }
 
@@ -44,8 +44,7 @@ public class VehicleService {
         return vehicleRepository.count();
     }
 
-    public List<Vehicle> search(String query) {
-        List<Vehicle> result = vehicleRepository.search(query);
-        return result;
+    public Set<Vehicle> search(String query) {
+        return vehicleRepository.search2("%" + query + "%");
     }
 }

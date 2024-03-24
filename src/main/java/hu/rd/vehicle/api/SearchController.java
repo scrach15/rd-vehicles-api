@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class SearchController {
     private final VehicleService vehicleService;
 
     @GetMapping
-    public List<Vehicle> search(@RequestParam(required = false) String q) {
+    public Set<Vehicle> search(@RequestParam(required = false) String q) {
         if (StringUtils.isEmpty(q)) {
             throw new ConstraintViolationException("q must not be empty", null);
         }
