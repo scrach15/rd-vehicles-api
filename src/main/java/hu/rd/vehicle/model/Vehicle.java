@@ -1,53 +1,46 @@
 package hu.rd.vehicle.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
-@Entity
+@Document
 @ToString
-@NamedNativeQuery(
-        name = "Vehicle.search",
-        query = "SELECT * FROM vehicle_adatok va JOIN vehicle v ON v.uuid = va.vehicle_uuid WHERE v.rendszam ILIKE '%R%' OR v.tulajdonos ILIKE '%R%' OR va.adatok ILIKE '%R%'",
-        resultClass = Vehicle.class
-)
-public class Vehicle {
+//@CompoundIndexes({
+//        @CompoundIndex(name = "search", def = "{'rendszam': 1, 'tulajdonos': 1, 'adatok': 1}")
+//})
+public class Vehicle extends UuidIdentifiedEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "uuid", nullable = false)
-    @JsonProperty("uuid")
-    private String id;
-
+//    @Indexed
     @NotNull(message = "Nem lehet null")
     @Size(min = 1, message = "Nem lehet ures")
-    @Column(length = 20)
     @JsonProperty("rendszam")
     public String rendszam;
 
+//    @Indexed
     @NotNull(message = "Nem lehet null")
     @Size(min = 1, message = "Nem lehet ures")
-    @Column(length = 200)
     @JsonProperty("tulajdonos")
     public String tulajdonos;
 
     @NotNull(message = "Nem lehet null")
     @Size(min = 1, message = "Nem lehet ures")
     @JsonProperty("forgalmi_ervenyes")
-    @Column(length = 10)
     public String forgalmiErvenyes;
 
+//    @Indexed
     @NotNull(message = "Nem lehet null")
-    @ElementCollection(fetch = FetchType.EAGER)
     @JsonProperty("adatok")
     public Set<String> adatok;
 

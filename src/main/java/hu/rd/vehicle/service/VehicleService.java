@@ -3,16 +3,16 @@ package hu.rd.vehicle.service;
 import hu.rd.vehicle.api.exception.VehicleNotFoundException;
 import hu.rd.vehicle.model.Vehicle;
 import hu.rd.vehicle.repository.VehicleRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class VehicleService {
 
@@ -36,15 +36,14 @@ public class VehicleService {
      * @return      the found vehicle or null if not found
      */
     public Vehicle findById(String id) {
-        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(() -> new VehicleNotFoundException(String.format("Vehicle not found: %s", id)));
-        return vehicle;
+        return vehicleRepository.findById(UUID.fromString(id)).orElseThrow(() -> new VehicleNotFoundException(String.format("Vehicle not found: %s", id)));
     }
 
     public Long count() {
         return vehicleRepository.count();
     }
 
-    public Set<Vehicle> search(String query) {
-        return vehicleRepository.search2("%" + query + "%");
+    public List<Vehicle> search(String query) {
+        return vehicleRepository.search(query, Pageable.ofSize(10));
     }
 }

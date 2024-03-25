@@ -1,25 +1,18 @@
 package hu.rd.vehicle.repository;
 
 import hu.rd.vehicle.model.Vehicle;
-import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
-@Transactional(Transactional.TxType.MANDATORY)
-public interface VehicleRepository  extends JpaRepository<Vehicle, String> {
+public interface VehicleRepository  extends MongoRepository<Vehicle, UUID> {
 
-    @Query("select count(v) from Vehicle v")
-    long count();
+    @Query("{ $or: [ { 'rendszam': { $regex: ?0, $options: 'i' } }, { 'tulajdonos': { $regex: ?0, $options: 'i' } }, { 'adatok': { $regex: ?0, $options: 'i' } } ] }")
+    List<Vehicle> search(String query, Pageable page);
 
-    @Query("select v from Vehicle v join fetch v.adatok a where v.rendszam ilike %?1% or v.tulajdonos ilike %?1% or exists (select 1 from v.adatok a where a ilike %?1%)")
-    List<Vehicle> search(String query);
-
-    @Query(value = "SELECT v.uuid, v.rendszam, v.tulajdonos, v.forgalmi_ervenyes, va.adatok FROM vehicle v inner join vehicle_adatok va ON v.uuid = va.vehicle_uuid WHERE va.adatok ILIKE :query OR v.rendszam ILIKE :query OR v.tulajdonos ILIKE :query LIMIT 25", nativeQuery = true)
-    Set<Vehicle> search2(@Param("query") String query);
 
 
 

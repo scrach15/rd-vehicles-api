@@ -3,32 +3,30 @@ version: "3"
 services:
   db:
     container_name: sza-db
-    image: postgres
+    image: mongo:7.0.6-jammy
     ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_PASSWORD: postgres
+      - "27017:27017"
     deploy:
       resources:
         limits:
-          cpus: '3.4'
-          memory: '6GB'
+          cpus: '1.5'
+          memory: '5GB'
   nginx:
     container_name: sza-nginx
     image: scrach/rd-vehicles-nginx
     depends_on:
       - api1
-#      - api2
+      - api2
     ports:
       - "8080:80"
     deploy:
       resources:
         limits:
-          cpus: '0.1'
+          cpus: '1'
           memory: '512MB'
   api1:
     container_name: sza-api1
-    image: scrach/rd-vehicles
+    image: scrach/rd-vehicles-mongo
     depends_on:
       - db
     healthcheck:
@@ -40,22 +38,22 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '1536MB'
-#  api2:
-#    container_name: sza-api2
-#    image: scrach/rd-vehicles
-#    depends_on:
-#      - db
-#      - api1
-#    healthcheck:
-#      test: "wget --spider --server-response http://localhost:8080/actuator/health 2>&1 | awk '/^  HTTP/{print $2}' | grep 200 || exit 1"
-#      interval: 10s
-#      timeout: 60s
-#      retries: 10
-#    restart: always
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '0.75'
-#          memory: '768MB'
+          cpus: '0.75'
+          memory: '1280MB'
+  api2:
+    container_name: sza-api2
+    image: scrach/rd-vehicles-mongo
+    depends_on:
+      - db
+      - api1
+    healthcheck:
+      test: "wget --spider --server-response http://localhost:8080/actuator/health 2>&1 | awk '/^  HTTP/{print $2}' | grep 200 || exit 1"
+      interval: 10s
+      timeout: 60s
+      retries: 10
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: '1280MB'
