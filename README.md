@@ -2,9 +2,16 @@
 
 ## Alkalmazás indítása
 
-Internet kapcsolatot igényel, a futáshoz szükséges docker image-ek a docker hub-on vannak.
+A Java alapú alkalmazásoknak működik a healthcheck-je is.
 
+```bash
+curl -I http://localhost:8080/actuator/health
+```
+
+Internet kapcsolatot igényel, a futáshoz szükséges docker image-ek a docker hub-on vannak.
+```bash
 docker compose up -d
+```
 
 ## Komponensek és forráskód
 
